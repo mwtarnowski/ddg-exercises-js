@@ -91,7 +91,14 @@ class SimplicialComplexOperators {
          *  vertex i is in the given subset and 0 otherwise
          */
         buildVertexVector(subset) {
-                // TODO
+                let vn = this.mesh.vertices.length;
+
+                let vec = DenseMatrix.zeros(vn);
+                for (let v of subset.vertices) {
+                        vec.set(1, v);
+                }
+
+                return vec;
         }
 
         /** Returns a column vector representing the edges of the
@@ -102,7 +109,14 @@ class SimplicialComplexOperators {
          *  edge i is in the given subset and 0 otherwise
          */
         buildEdgeVector(subset) {
-                // TODO
+                let en = this.mesh.edges.length;
+
+                let vec = DenseMatrix.zeros(en);
+                for (let e of subset.edges) {
+                        vec.set(1, e);
+                }
+
+                return vec;
         }
 
         /** Returns a column vector representing the faces of the
@@ -113,7 +127,14 @@ class SimplicialComplexOperators {
          *  face i is in the given subset and 0 otherwise
          */
         buildFaceVector(subset) {
-                // TODO
+                let fn = this.mesh.faces.length;
+
+                let vec = DenseMatrix.zeros(fn);
+                for (let f of subset.faces) {
+                        vec.set(1, f);
+                }
+
+                return vec;
         }
 
         /** Returns the star of a subset.
