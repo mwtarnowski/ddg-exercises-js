@@ -206,7 +206,7 @@ class SimplicialComplexOperators {
          * @returns {boolean} True if the given subset is a subcomplex and false otherwise.
          */
         isComplex(subset) {
-                // TODO
+                return subset.equals(this.closure(subset));
         }
 
         /** Returns the degree if the given subset is a pure subcomplex and -1 otherwise.
@@ -215,7 +215,31 @@ class SimplicialComplexOperators {
          * @returns {number} The degree of the given subset if it is a pure subcomplex and -1 otherwise.
          */
         isPureComplex(subset) {
-                // TODO
+                if (!this.isComplex(subset)) {
+                        return -1;
+                }
+
+                let dim = (subset.faces.size > 0) ? 2 : (subset.edges.size > 0) ? 1 : 0;
+                if (dim > 0) {
+                        let vertexVec = this.buildVertexVector(subset);
+                        let edgeVertexVec = this.A0.transpose().timesDense(this.buildEdgeVector(subset));
+                        for (let i = 0; i < this.mesh.vertices.length; i++) {
+                                if (vertexVec.get(i) && !edgeVertexVec.get(i)) {
+                                        return -1;
+                                }
+                        }
+                }
+                if (dim > 1) {
+                        let edgeVec = this.buildEdgeVector(subset);
+                        let faceEdgeVec = this.A1.transpose().timesDense(this.buildFaceVector(subset));
+                        for (let i = 0; i < this.mesh.edges.length; i++) {
+                                if (edgeVec.get(i) && !faceEdgeVec.get(i)) {
+                                        return -1;
+                                }
+                        }
+                }
+
+                return dim;
         }
 
         /** Returns the boundary of a subset.
