@@ -45,7 +45,23 @@ class SimplicialComplexOperators {
          * @returns {module:LinearAlgebra.SparseMatrix} The vertex-edge adjacency matrix of the given mesh.
          */
         buildVertexEdgeAdjacencyMatrix(mesh) {
-                // TODO
+                let vn = mesh.vertices.length;
+                let en = mesh.edges.length;
+
+                let M = new Triplet(en, vn);
+                for (let e of mesh.edges) {
+                        let v1 = e.halfedge.vertex;
+                        let v2 = e.halfedge.twin.vertex;
+                        M.addEntry(1, e.index, v1.index);
+                        M.addEntry(1, e.index, v2.index);
+                }
+                // for (let v of mesh.vertices) {
+                //         for (let e of v.adjacentEdges()) {
+                //                 M.addEntry(1, e.index, v.index);
+                //         }
+                // }
+
+                return SparseMatrix.fromTriplet(M);
         }
 
         /** Returns the edge-face adjacency matrix.
