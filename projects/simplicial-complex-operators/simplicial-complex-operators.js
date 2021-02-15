@@ -143,9 +143,23 @@ class SimplicialComplexOperators {
          * @returns {module:Core.MeshSubset} The star of the given subset.
          */
         star(subset) {
-                // TODO
+                let s = MeshSubset.deepCopy(subset);
 
-                return subset; // placeholder
+                let edgeVec = this.A0.timesDense(this.buildVertexVector(s));
+                for (let i = 0; i < edgeVec.nRows(); i++) {
+                        if (edgeVec.get(i)) {
+                                s.addEdge(i);
+                        }
+                }
+
+                let faceVec = this.A1.timesDense(this.buildEdgeVector(s));
+                for (let i = 0; i < faceVec.nRows(); i++) {
+                        if (faceVec.get(i)) {
+                                s.addFace(i);
+                        }
+                }
+
+                return s;
         }
 
         /** Returns the closure of a subset.
@@ -154,9 +168,23 @@ class SimplicialComplexOperators {
          * @returns {module:Core.MeshSubset} The closure of the given subset.
          */
         closure(subset) {
-                // TODO
+                let s = MeshSubset.deepCopy(subset);
 
-                return subset; // placeholder
+                let edgeVec = this.A1.transpose().timesDense(this.buildFaceVector(s));
+                for (let i = 0; i < edgeVec.nRows(); i++) {
+                        if (edgeVec.get(i)) {
+                                s.addEdge(i);
+                        }
+                }
+
+                let vertexVec = this.A0.transpose().timesDense(this.buildEdgeVector(s));
+                for (let i = 0; i < vertexVec.nRows(); i++) {
+                        if (vertexVec.get(i)) {
+                                s.addVertex(i);
+                        }
+                }
+
+                return s;
         }
 
         /** Returns the link of a subset.
@@ -165,9 +193,11 @@ class SimplicialComplexOperators {
          * @returns {module:Core.MeshSubset} The link of the given subset.
          */
         link(subset) {
-                // TODO
+                let s1 = this.closure(this.star(subset));
+                let s2 = this.star(this.closure(subset));
+                s1.deleteSubset(s2);
 
-                return subset; // placeholder
+                return s1;
         }
 
         /** Returns true if the given subset is a subcomplex and false otherwise.
