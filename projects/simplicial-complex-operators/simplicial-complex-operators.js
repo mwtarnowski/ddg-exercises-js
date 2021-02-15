@@ -70,7 +70,17 @@ class SimplicialComplexOperators {
          * @returns {module:LinearAlgebra.SparseMatrix} The edge-face adjacency matrix of the given mesh.
          */
         buildEdgeFaceAdjacencyMatrix(mesh) {
-                // TODO
+                let en = mesh.edges.length;
+                let fn = mesh.faces.length;
+
+                let M = new Triplet(fn, en);
+                for (let f of mesh.faces) {
+                        for (let e of f.adjacentEdges()) {
+                                M.addEntry(1, f.index, e.index);
+                        }
+                }
+
+                return SparseMatrix.fromTriplet(M);
         }
 
         /** Returns a column vector representing the vertices of the
