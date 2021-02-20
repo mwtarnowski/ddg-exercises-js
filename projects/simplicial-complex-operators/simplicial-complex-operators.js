@@ -248,8 +248,26 @@ class SimplicialComplexOperators {
          * @returns {module:Core.MeshSubset} The boundary of the given pure subcomplex.
          */
         boundary(subset) {
-                // TODO
+                let dim = (subset.faces.size > 0) ? 2 : (subset.edges.size > 0) ? 1 : 0;
 
-                return subset; // placeholder
+                let s = new MeshSubset();
+                if (dim == 1) {
+                        let edgeVertexVec = this.A0.transpose().timesDense(this.buildEdgeVector(subset));
+                        for (let i = 0; i < this.mesh.vertices.length; i++) {
+                                if (edgeVertexVec.get(i) == 1) {
+                                        s.addVertex(i);
+                                }
+                        }
+                } else if (dim == 2) {
+                        let faceEdgeVec = this.A1.transpose().timesDense(this.buildFaceVector(subset));
+                        for (let i = 0; i < this.mesh.edges.length; i++) {
+                                if (faceEdgeVec.get(i) == 1) {
+                                        s.addEdge(i);
+                                }
+                        }
+                }
+                s = this.closure(s);
+
+                return s;
         }
 }
