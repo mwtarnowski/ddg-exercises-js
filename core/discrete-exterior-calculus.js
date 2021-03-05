@@ -55,9 +55,19 @@ class DEC {
 	 * @returns {module:LinearAlgebra.SparseMatrix}
 	 */
 	static buildExteriorDerivative0Form(geometry, edgeIndex, vertexIndex) {
-		// TODO
+		let vn = geometry.mesh.vertices.length;
+		let en = geometry.mesh.edges.length;
 
-		return SparseMatrix.identity(1, 1); // placeholder
+		let M = new Triplet(en, vn);
+		for (let e of geometry.mesh.edges) {
+			let i = edgeIndex[e];
+			let j1 = vertexIndex[e.halfedge.vertex];  // target vertex (+1)
+			M.addEntry( 1, i, j1);
+			let j2 = vertexIndex[e.halfedge.twin.vertex];  // source vertex (-1)
+			M.addEntry(-1, i, j2);
+		}
+
+		return SparseMatrix.fromTriplet(M);
 	}
 
 	/**
@@ -69,8 +79,22 @@ class DEC {
 	 * @returns {module:LinearAlgebra.SparseMatrix}
 	 */
 	static buildExteriorDerivative1Form(geometry, faceIndex, edgeIndex) {
-		// TODO
+		let en = geometry.mesh.edges.length;
+		let fn = geometry.mesh.faces.length;
 
-		return SparseMatrix.identity(1, 1); // placeholder
+		let M = new Triplet(fn, en);
+		for (let f of geometry.mesh.faces) {
+			let i = faceIndex[f];
+			for (let h of f.adjacentHalfedges()) {
+				let j = edgeIndex[h.edge];
+				if (h.edge.halfedge === h) {  // same orientation (+1)
+					M.addEntry( 1, i, j);
+				} else {  // opposite orientation (-1)
+					M.addEntry(-1, i, j);
+				}
+			}
+		}
+
+		return SparseMatrix.fromTriplet(M);
 	}
 }
