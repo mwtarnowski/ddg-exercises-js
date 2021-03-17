@@ -14,9 +14,16 @@ class DEC {
 	 * @returns {module:LinearAlgebra.SparseMatrix}
 	 */
 	static buildHodgeStar0Form(geometry, vertexIndex) {
-		// TODO
+		let vn = geometry.mesh.vertices.length;
 
-		return SparseMatrix.identity(1, 1); // placeholder
+		let M = new Triplet(vn, vn);
+		for (let v of geometry.mesh.vertices) {
+			let i = vertexIndex[v];
+			let dual = geometry.barycentricDualArea(v);
+			M.addEntry(dual, i, i);
+		}
+
+		return SparseMatrix.fromTriplet(M);
 	}
 
 	/**
@@ -27,9 +34,16 @@ class DEC {
 	 * @returns {module:LinearAlgebra.SparseMatrix}
 	 */
 	static buildHodgeStar1Form(geometry, edgeIndex) {
-		// TODO
+		let en = geometry.mesh.edges.length;
 
-		return SparseMatrix.identity(1, 1); // placeholder
+		let M = new Triplet(en, en);
+		for (let e of geometry.mesh.edges) {
+			let i = edgeIndex[e];
+			let dual = (geometry.cotan(e.halfedge) + geometry.cotan(e.halfedge.twin)) / 2;
+			M.addEntry(dual, i, i);
+		}
+
+		return SparseMatrix.fromTriplet(M);
 	}
 
 	/**
@@ -41,9 +55,16 @@ class DEC {
 	 * @returns {module:LinearAlgebra.SparseMatrix}
 	 */
 	static buildHodgeStar2Form(geometry, faceIndex) {
-		// TODO
+		let fn = geometry.mesh.faces.length;
 
-		return SparseMatrix.identity(1, 1); // placeholder
+		let M = new Triplet(fn, fn);
+		for (let f of geometry.mesh.faces) {
+			let i = faceIndex[f];
+			let dual = 1 / geometry.area(f);
+			M.addEntry(dual, i, i);
+		}
+
+		return SparseMatrix.fromTriplet(M);
 	}
 
 	/**
