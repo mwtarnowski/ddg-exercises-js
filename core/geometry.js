@@ -377,9 +377,12 @@ class Geometry {
 	 * @returns {number}
 	 */
 	angleDefect(v) {
-		// TODO
+		let sum = 0.0;
+		for (let c of v.adjacentCorners()) {
+			sum += this.angle(c);
+		}
 
-		return 0.0; // placeholder
+		return 2*Math.PI - sum;
 	}
 
 	/**
@@ -410,9 +413,12 @@ class Geometry {
 	 * @returns {number}
 	 */
 	totalAngleDefect() {
-		// TODO
+		let sum = 0.0;
+		for (let v of this.mesh.vertices) {
+			sum += this.angleDefect(v);
+		}
 
-		return 0.0; // placeholder
+		return sum;
 	}
 
 	/**
