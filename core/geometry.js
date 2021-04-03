@@ -382,7 +382,7 @@ class Geometry {
 			sum += this.angle(c);
 		}
 
-		return 2*Math.PI - sum;
+		return v.onBoundary() ? Math.PI - sum : 2*Math.PI - sum;
 	}
 
 	/**
