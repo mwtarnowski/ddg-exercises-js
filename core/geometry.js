@@ -275,9 +275,17 @@ class Geometry {
 	 * @returns {module:LinearAlgebra.Vector}
 	 */
 	vertexNormalAreaWeighted(v) {
-		// TODO
+		let n = new Vector();
+		for (let f of v.adjacentFaces()) {
+			let normal = this.faceNormal(f);
+			let area = this.area(f);
 
-		return new Vector(); // placeholder
+			n.incrementBy(normal.times(area));
+		}
+
+		n.normalize();
+
+		return n;
 	}
 
 	/**
@@ -287,9 +295,17 @@ class Geometry {
 	 * @returns {module:LinearAlgebra.Vector}
 	 */
 	vertexNormalAngleWeighted(v) {
-		// TODO
+		let n = new Vector();
+		for (let c of v.adjacentCorners()) {
+			let normal = this.faceNormal(c.halfedge.face);
+			let angle = this.angle(c);
 
-		return new Vector(); // placeholder
+			n.incrementBy(normal.times(angle));
+		}
+
+		n.normalize();
+
+		return n;
 	}
 
 	/**
@@ -299,9 +315,17 @@ class Geometry {
 	 * @returns {module:LinearAlgebra.Vector}
 	 */
 	vertexNormalGaussCurvature(v) {
-		// TODO
+		let n = new Vector();
+		for (let h of v.adjacentHalfedges()) {
+			let k = this.dihedralAngle(h) / this.length(h.edge) / 2;
+			let v = this.vector(h).negated();
 
-		return new Vector(); // placeholder
+			n.incrementBy(v.times(k));
+		}
+
+		n.normalize();
+
+		return n;
 	}
 
 	/**
@@ -311,9 +335,17 @@ class Geometry {
 	 * @returns {module:LinearAlgebra.Vector}
 	 */
 	vertexNormalMeanCurvature(v) {
-		// TODO
+		let n = new Vector();
+		for (let h of v.adjacentHalfedges()) {
+			let k = (this.cotan(h) + this.cotan(h.twin)) / 2;
+			let v = this.vector(h).negated();
 
-		return new Vector(); // placeholder
+			n.incrementBy(v.times(k));
+		}
+
+		n.normalize();
+
+		return n;
 	}
 
 	/**
@@ -323,9 +355,18 @@ class Geometry {
 	 * @returns {module:LinearAlgebra.Vector}
 	 */
 	vertexNormalSphereInscribed(v) {
-		// TODO
+		let n = new Vector();
+		for (let h of v.adjacentHalfedges()) {
+			let u = this.vector(h);
+			let v = this.vector(h.prev).negated();
+			let normal = u.cross(v).over(u.norm2() * v.norm2());
 
-		return new Vector(); // placeholder
+			n.incrementBy(normal);
+		}
+
+		n.normalize();
+
+		return n;
 	}
 
 	/**
