@@ -200,6 +200,8 @@ class Geometry {
 	 * @returns {number}
 	 */
 	cotan(h) {
+		if (h.onBoundary) return 0.0;
+
 		let u = this.vector(h.prev);
 		let v = this.vector(h.next).negated();
 
@@ -214,6 +216,8 @@ class Geometry {
 	 * @returns {number} The dihedral angle.
 	 */
 	dihedralAngle(h) {
+		if (h.onBoundary || h.twin.onBoundary) return 0.0;
+
 		let e = this.vector(h).unit();
 		let n1 = this.faceNormal(h.face);
 		let n2 = this.faceNormal(h.twin.face);
