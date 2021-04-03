@@ -187,9 +187,10 @@ class Geometry {
 	 * @returns {number} The angle clamped between 0 and π.
 	 */
 	angle(c) {
-		// TODO
+		let u = this.vector(c.halfedge.prev).unit();
+		let v = this.vector(c.halfedge.next).unit().negated();
 
-		return 0.0; // placeholder
+		return Math.acos(u.dot(v));
 	}
 
 	/**
@@ -213,9 +214,11 @@ class Geometry {
 	 * @returns {number} The dihedral angle.
 	 */
 	dihedralAngle(h) {
-		// TODO
+		let e = this.vector(h).unit();
+		let n1 = this.faceNormal(h.face);
+		let n2 = this.faceNormal(h.twin.face);
 
-		return 0.0; // placeholder
+		return Math.atan2(e.dot(n1.cross(n2)), n1.dot(n2));
 	}
 
 	/**
