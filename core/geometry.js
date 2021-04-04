@@ -248,9 +248,13 @@ class Geometry {
 	 * @returns {number}
 	 */
 	circumcentricDualArea(v) {
-		// TODO
+		let sum = 0.0;
+		for (let h of v.adjacentHalfedges()) {
+			let len2 = this.vector(h).norm2();
+			sum += (this.cotan(h) + this.cotan(h.twin)) * len2 / 8;
+		}
 
-		return 0.0; // placeholder
+		return sum;
 	}
 
 	/**
@@ -406,9 +410,12 @@ class Geometry {
 	 * @returns {number}
 	 */
 	scalarMeanCurvature(v) {
-		// TODO
+		let sum = 0.0;
+		for (let h of v.adjacentHalfedges()) {
+			sum += this.length(h.edge) * this.dihedralAngle(h) / 2;
+		}
 
-		return 0.0; // placeholder
+		return sum;
 	}
 
 	/**
@@ -432,9 +439,20 @@ class Geometry {
 	 * @returns {number[]} An array containing the minimum and maximum principal curvature values at a vertex.
 	 */
 	principalCurvatures(v) {
-		// TODO
+		let A = this.circumcentricDualArea(v);
+		let H = this.scalarMeanCurvature(v) / A;
+		let K = this.scalarGaussCurvature(v) / A;
 
-		return [0.0, 0.0]; // placeholder
+		// solve k*k - 2*H*k + K == 0
+		let delta = H*H - K;
+		// assert delta >= 0
+		delta = Math.max(delta, 0);
+		let delta_sqrt = Math.sqrt(delta);
+
+		let k1 = H - delta_sqrt;
+		let k2 = H + delta_sqrt;
+
+		return [k1, k2];
 	}
 
 	/**
